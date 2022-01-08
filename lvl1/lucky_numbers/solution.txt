@@ -2,14 +2,19 @@ entry() function at LAB_0804903a
 MOV EAX, 0x4    ; system call number (sys_write)
 MOV EBX, 0x1    ; file descriptor (stdout)
 MOV ECX, DAT_0804a000    ; message to write (DAT_0804a000 = "Lucky Numbers: ", this will require a buffer size of 15)
-MOV EDX, 0xf    ; length of the buffer (15)
+MOV EDX, 0xf    ; length of the buffer (15 number of bytes to write)
 INT 0x80    ; calls the kernel (will use registers EBX, ECX, EDX, ESI, EDI, and EBP)
 
+    ; at this point the result from the system call will be stored in EAX
+
 MOV EAX, 0x3    ; system call number (sys_read)
-MOV EBX, 0x2    ; file descriptor (stderr) ????????????????????????????
-MOV ECX, DAT_0804a024    ; message to write (DAT_0804a024 is undefined at this point with one byte)
-MOV EDX, 0x2    ; length of the buffer (2, one byte for sign, one byte for message)
+MOV EBX, 0x2    ; file descriptor (stderr) ?(in the terminal stdin,stdout,stderr are the same file, you can, but why would you use stderr >:( !!??)?
+MOV ECX, DAT_0804a024    ; message to read (DAT_0804a024 is undefined at this point, DAT_0804a024 will be the pointer to the input buffer, which will be stored in ECX)
+MOV EDX, 0x2    ; length of the buffer (2, number of bytes to read)
 INT 0x80    ; calls the kernel (will use registers EBX, ECX, EDX, ESI, EDI, and EBP)
+
+    ; at this point the result from the system call will be stored in EAX
+
 
 MOV AL, [DAT_0804a024]    ; get the value in DAT_0804a024 and store it in AL (1 byte)
 SUB AL, 0x30    ; a
@@ -24,3 +29,7 @@ CMP BL, 0x38    ; a
 JNZ LAB_08049000    ; a (will lead to failure and exit the program)
 CMP EAX, EAX    ; a
 JZ LAB_0804901d    ; a
+
+
+; Notes
+; File Handling System Calls Information: https://www.tutorialspoint.com/assembly_programming/assembly_file_management.htm
