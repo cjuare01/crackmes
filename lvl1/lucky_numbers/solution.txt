@@ -1,5 +1,26 @@
-mov EAX, 0x4    ; system call number (sys_write)
-mov EBX, 0x1    ; file descriptor (stdout)
-mov ECX, DAT_0804a000    ; message to write (DAT_0804a000 = "Lucky Numbers: ", this will require a buffer size of 15)
-mov EDX, 0xf    ; length of the buffer (15)
+entry() function at LAB_0804903a
+MOV EAX, 0x4    ; system call number (sys_write)
+MOV EBX, 0x1    ; file descriptor (stdout)
+MOV ECX, DAT_0804a000    ; message to write (DAT_0804a000 = "Lucky Numbers: ", this will require a buffer size of 15)
+MOV EDX, 0xf    ; length of the buffer (15)
 INT 0x80    ; calls the kernel (will use registers EBX, ECX, EDX, ESI, EDI, and EBP)
+
+MOV EAX, 0x3    ; system call number (sys_read)
+MOV EBX, 0x2    ; file descriptor (stderr) ????????????????????????????
+MOV ECX, DAT_0804a024    ; message to write (DAT_0804a024 is undefined at this point with one byte)
+MOV EDX, 0x2    ; length of the buffer (2, one byte for sign, one byte for message)
+INT 0x80    ; calls the kernel (will use registers EBX, ECX, EDX, ESI, EDI, and EBP)
+
+MOV AL, [DAT_0804a024]    ; get the value in DAT_0804a024 and store it in AL (1 byte)
+SUB AL, 0x30    ; a
+MOV BL, byte ptr [DAT_0804a025]    ; a
+SUB BL, 0x30    ; a
+ADC AL, BL    ; a
+DAA    ; a
+ADD BL, 0x30    ; a
+CMP AL, 0x16    ; a
+JNZ LAB_08049000    ; a (will lead to failure and exit the program)
+CMP BL, 0x38    ; a
+JNZ LAB_08049000    ; a (will lead to failure and exit the program)
+CMP EAX, EAX    ; a
+JZ LAB_0804901d    ; a
